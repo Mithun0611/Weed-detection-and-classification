@@ -9,19 +9,6 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# def load_images(data_path, img_size=(64, 64)):
-#     images = []
-#     labels = []
-#     class_names = os.listdir(data_path)
-#     for index, cls in enumerate(class_names):
-#         cls_folder = os.path.join(data_path, cls)
-#         for img_name in os.listdir(cls_folder):
-#             img_path = os.path.join(cls_folder, img_name)
-#             img = cv2.imread(img_path)
-#             img = cv2.resize(img, img_size)
-#             images.append(img)
-#             labels.append(index)
-#     return np.array(images), np.array(labels), class_names
 
 def load_images(data_path, img_size=(64, 64)):
     images = []
