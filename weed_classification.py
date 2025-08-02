@@ -92,4 +92,34 @@ for file in os.listdir(test_folder):
     print(f"\nTesting image: {file}")
     predict_new_image(path, threshold=0.6)
 
+from collections import Counter
+
+prediction_counts = Counter()
+
+for file in os.listdir(test_folder):
+    path = os.path.join(test_folder, file)
+    print(f"\nTesting image: {file}")
+    
+    img = cv2.imread(path)
+    img = cv2.resize(img, (64, 64))
+    img = img.astype('float32') / 255.0
+    img = np.expand_dims(img, axis=0)
+    
+    pred = model.predict(img)[0]
+    class_index = np.argmax(pred)
+    confidence = pred[class_index]
+    
+    if confidence >= 0.6:
+        predicted_class = class_names[class_index]
+    else:
+        predicted_class = "Unknown"
+    
+    prediction_counts[predicted_class] += 1
+    print(f"Predicted Class: {predicted_class} (Confidence: {confidence*100:.2f}%)")
+
+# Print summary
+print("\n--- Prediction Summary ---")
+for cls, count in prediction_counts.items():
+    print(f"{cls}: {count} images")
+
 
