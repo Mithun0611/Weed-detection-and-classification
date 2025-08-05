@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 
 # Training
-train_dir = 'E:\Industrial project\weed detection'
+train_dir = 'E:/Industrial project/weed detection'
 datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
 train_data = datagen.flow_from_directory(train_dir, target_size=(128, 128), class_mode='binary', subset='training', shuffle=True)
 val_data = datagen.flow_from_directory(train_dir, target_size=(128, 128), class_mode='binary', subset='validation', shuffle=False)
@@ -35,37 +35,37 @@ plt.title('Confusion Matrix on Validation Data')
 plt.show()
 
 
-# Test image clear prediction
-test_image_path = r'weed detection/weed_images/agri_0_84.jpeg'
+# Test image clear prediction with corrected rectangle
+test_image_path = r'weed detection\weed_images\agri_0_122.jpeg'
 try:
     img_pil = load_img(test_image_path, target_size=(128, 128))
     img_arr = img_to_array(img_pil) / 255.0
     img_expanded = np.expand_dims(img_arr, axis=0)
     pred = model.predict(img_expanded, verbose=0)[0][0]
     
-    img_cv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
-
-# Resize image to make it bigger (optional – you can skip if your image is already large enough)
-    img_cv = cv2.resize(img_cv, (1024, 1024))  # Resize to 512x512 pixels
+    # Load original image for display (not resized to 128x128, but displayed in 512x512)
+    img_cv = cv2.cvtColor(np.array(load_img(test_image_path)), cv2.COLOR_RGB2BGR)
+    img_cv = cv2.resize(img_cv, (512, 512))  # Resize for better visibility
 
     if pred > 0.5:
         print(f"The test image is predicted as: WEED with {pred*100:.2f}%")
 
-        # Draw larger rectangle with label inside
-        top_left = (1500, 1500)
-        bottom_right = (400, 400)
+        # Draw a centered rectangle around the image
+        top_left = (50, 50)
+        bottom_right = (462, 462)  # 512 - 50 = 462
         cv2.rectangle(img_cv, top_left, bottom_right, (0, 0, 255), 3)
         
-        # Put 'Weed' text inside rectangle
+        # Put 'Weed' text at top-left corner of the rectangle
         text_position = (top_left[0] + 10, top_left[1] + 40)
         cv2.putText(img_cv, 'Weed', text_position, cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
 
+        # Show image
         cv2.imshow('Weed Detection', img_cv)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
     
     else:
-        print(f" The test image is predicted as: CROP with {(1-pred)*100:.2f}%")
+        print(f"The test image is predicted as: CROP with {(1-pred)*100:.2f}%")
 
 except FileNotFoundError:
-    print(f"test image  not found. Check the path.")
+    print(f"Test image not found. Check the path.")
